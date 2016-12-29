@@ -15,14 +15,15 @@ class Command(BaseCommand):
 
         movies = Movie.recent.filter(status='NP')
         for mv in movies:
+            mv.movies.all().delete()
             self.stdout.write(self.style.SUCCESS("Fetching Showtimes for %s" % mv.name))
             _booking_urls = [
                                 urljoin(_base_url, _booking_uri % (mv.event_id, 0, 0)),
                                 urljoin(_base_url, _booking_uri % (mv.event_id, 0, 1)),
                                 urljoin(_base_url, _booking_uri % (mv.event_id, 1, 2))
                             ]
+            i = 0
             for _booking_url in _booking_urls:
-                i = 0
                 result = requests.get(_booking_url)
                 if result.status_code == 200:
                     soup = BeautifulSoup(result.content, 'html.parser')
@@ -32,7 +33,7 @@ class Command(BaseCommand):
 
                         if not Showtime.get_cinemahall_code(show_hall_name):
                             continue
-                            
+
                         for st in show_times:
                             time = st.text
                             url = st.get('href')
