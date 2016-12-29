@@ -11,7 +11,6 @@ class Command(BaseCommand):
         _base_url = 'http://www.qfxcinemas.com/'
         _np_detail_url = '/Home/GetMovieDetails?EventID=%d'
         _up_detail_url = '/Home/GetComingSoonMovieDetails?EventID=%d'
-        _np_ticket_url = '/Home/GetTicketBookDetail?EventID=%d'
         _thumb_url = '/Home/GetThumbnailImage?EventID=%d'
         _trailer_url = 'https://www.youtube.com/watch?v=%s'
         result = requests.get(_base_url)
@@ -23,7 +22,7 @@ class Command(BaseCommand):
             up_coming = category_block[1]
 
             # fetch now_playing movies
-            self.stdout.write(self.style.WARNING("Fetching Now Playing ..."))
+            self.stdout.write(self.style.SUCCESS("Fetching Now Playing ..."))
             for movie in now_playing.find_all("div", "movie"):
                 name = str(movie.find("h4", "movie-title").text)
                 event_id = int(movie.find("a").get('href').split('=')[-1])
@@ -49,7 +48,7 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR("DETAILS NOT FOUND"))
 
             # fetch upcoming movies
-            self.stdout.write(self.style.WARNING("Fetching Upcoming ..."))
+            self.stdout.write(self.style.SUCCESS("Fetching Upcoming ..."))
             for movie in up_coming.find_all("div", "movie"):
                 name = str(movie.find("h4", "movie-title").text)
                 event_id = int(movie.find("a").get('href').split('=')[-1])
