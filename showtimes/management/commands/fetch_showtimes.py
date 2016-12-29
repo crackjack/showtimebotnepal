@@ -36,9 +36,10 @@ class Command(BaseCommand):
 
                         for st in show_times:
                             time = st.text
-                            url = st.get('href')
+                            _url = st.get('href')
 
-                            showtime = Showtime.objects.create(date=datetime.datetime.utcnow()+datetime.timedelta(days=i), movie=mv, cinema=Showtime.get_cinemahall_code(show_hall_name), time=time, booking_url=url)
+                            booking_url = urljoin(_base_url, _url)
+                            showtime = Showtime.objects.create(date=datetime.datetime.utcnow()+datetime.timedelta(days=i), movie=mv, cinema=Showtime.get_cinemahall_code(show_hall_name), time=time, booking_url=booking_url)
                     i += 1
                 elif result.status_code == 500:
                     pass
