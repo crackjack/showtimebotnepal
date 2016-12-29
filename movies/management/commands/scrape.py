@@ -10,12 +10,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         _base_url = 'http://www.qfxcinemas.com/'
         _np_detail_url = '/Home/GetMovieDetails?EventID=%d'
+        _up_detail_url = '/Home/GetComingSoonMovieDetails?EventID=%d'
         _np_ticket_url = '/Home/GetTicketBookDetail?EventID=%d'
         _thumb_url = '/Home/GetThumbnailImage?EventID=%d'
         _trailer_url = 'https://www.youtube.com/watch?v=%s'
         result = requests.get(_base_url)
         if result.status_code == 200:
-            self.stdout.write(self.style.SUCCESS("URL: %s" % _base_url))
             soup = BeautifulSoup(result.content, 'html.parser')
             movies_block = soup.find("div", "content")
             category_block = movies_block.find_all("div", "movies")
@@ -23,20 +23,19 @@ class Command(BaseCommand):
             up_coming = category_block[1]
 
             # fetch now_playing movies
+            self.stdout.write(self.style.WARNING("Fetching Now Playing ..."))
             for movie in now_playing.find_all("div", "movie"):
                 name = str(movie.find("h4", "movie-title").text)
                 event_id = int(movie.find("a").get('href').split('=')[-1])
                 image = urljoin(_base_url, _thumb_url % event_id)
                 status = 'NP'
-                mv = Movie.objects.create(name=name, event_id=event_id, image=image, status=status)
+                mv, _ = Movie.objects.update_or_create(event_id=event_id, defaults={'name': name, 'image': image, 'status': status})
 
                 # fetch other details like runtime, trailer and plot from details url
                 _det_url = urljoin(_base_url, _np_detail_url % event_id)
                 details = requests.get(_det_url)
                 if details.status_code == 200:
-                    self.stdout.write(self.style.SUCCESS("URL: %s" % _det_url))
                     dsoup = BeautifulSoup(details.content, 'html.parser')
-                    # import ipdb; ipdb.set_trace()
                     video_id = str(dsoup.find("input", type="hidden").get('value'))
                     plot = str(dsoup.find_all("div", "mar-t-15")[-1].find("p").text)
                     # TODO: get runtime here
@@ -49,5 +48,31 @@ class Command(BaseCommand):
                 else:
                     self.stdout.write(self.style.ERROR("DETAILS NOT FOUND"))
 
+            # fetch upcoming movies
+            self.stdout.write(self.style.WARNING("Fetching Upcoming ..."))
+            for movie in up_coming.find_all("div", "movie"):
+                name = str(movie.find("h4", "movie-title").text)
+                event_id = int(movie.find("a").get('href').split('=')[-1])
+                image = urljoin(_base_url, _thumb_url % event_id)
+                status = 'UP'
+                mv, _ = Movie.objects.update_or_create(event_id=event_id, defaults={'name': name, 'image': image, 'status': status})
+
+                # fetch other details like runtime, trailer and plot from details url
+                _det_url = urljoin(_base_url, _up_detail_url % event_id)
+                details = requests.get(_det_url)
+                if details.status_code == 200:
+                    dsoup = BeautifulSoup(details.content, 'html.parser')
+                    video_id = str(dsoup.find("input", type="hidden").get('value'))
+                    plot = str(dsoup.find_all("div", "mar-t-15")[-1].find("p").text)
+                    # TODO: get runtime here
+
+                    # save these extra fields
+                    mv.trailer = _trailer_url % video_id
+                    mv.plot = plot
+                    # TODO: save runtime here
+                    mv.save()
+                else:
+                    self.stdout.write(self.style.ERROR("DETAILS NOT FOUND"))
+            self.stdout.write(self.style.SUCCESS("Successfully Done."))
         else:
             self.stdout.write(self.style.ERROR("HTTP: %d" % int(result.status_code)))
