@@ -80,8 +80,12 @@ WSGI_APPLICATION = 'qfx.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dc5dgrqj90nr06',
+        'USER': 'qhmvglvvavhvop',
+        'PASSWORD': '50cad49dba980632492bf4b3dc9976e92793d45ecade383097962cdeddd62a58',
+        'HOST': 'ec2-54-163-240-7.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
 }
 
@@ -130,3 +134,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+try:
+    from local_settings import *
+except:
+    pass
