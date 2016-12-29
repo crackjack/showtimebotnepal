@@ -16,7 +16,41 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
+from django.conf.urls import url, include
+from django.contrib.auth.models import User
+from rest_framework import routers, serializers, viewsets
+
+from movies.models import Movie
+from showtimes.models import Showtime
+
+class MovieSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Movie
+        fields = ('name', 'poster', 'trailer', 'plot', 'status')
+
+class MovieViewSet(viewsets.ModelViewSet):
+    queryset = Movie.recent.all()
+    serializer_class = MovieSerializer
+
+class ShowtimeSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Showtime
+        fields = ('date', 'movie', 'cinema', 'time', 'booking_url')
+
+class ShowtimeViewSet(viewsets.ModelViewSet):
+    queryset = Showtime.objects.all()
+    serializer_class = ShowtimeSerializer
+
+
+router = routers.DefaultRouter()
+router.register(r'movies', MovieViewSet)
+router.register(r'showtimes', ShowtimeViewSet)
+
+# Wire up our API using automatic URL routing.
+# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
+    url(r'^', include(router.urls)),
     url(r'^admin/', admin.site.urls),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
     # url(r'^movie/', movies.urls),
 ]

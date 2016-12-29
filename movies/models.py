@@ -21,7 +21,7 @@ class Movie(models.Model):
     name = models.CharField(max_length=255)
     event_id = models.IntegerField(unique=True, db_index=True)
     runtime = models.CharField(max_length=100, null=True, blank=True)
-    image = models.URLField(max_length=255, null=True, blank=True)
+    poster = models.URLField(max_length=255, null=True, blank=True)
     trailer = models.URLField(max_length=255, null=True, blank=True)
     plot = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='UP')
