@@ -28,7 +28,7 @@ class Command(BaseCommand):
                 event_id = int(movie.find("a").get('href').split('=')[-1])
                 image = urljoin(_base_url, _thumb_url % event_id)
                 status = 'NP'
-                mv = Movie.objects.create(name=name, event_id=event_id, image=image)
+                mv = Movie.objects.create(name=name, event_id=event_id, image=image, status=status)
 
                 # fetch other details like runtime, trailer and plot from details url
                 _det_url = urljoin(_base_url, _np_detail_url % event_id)
@@ -39,9 +39,6 @@ class Command(BaseCommand):
                     # import ipdb; ipdb.set_trace()
                     video_id = str(dsoup.find("input", type="hidden").get('value'))
                     plot = str(dsoup.find_all("div", "mar-t-15")[-1].find("p").text)
-
-                    print video_id, plot
-                    # break
                     # TODO: get runtime here
 
                     # save these extra fields
