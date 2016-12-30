@@ -21,14 +21,15 @@ class Command(BaseCommand):
             now_playing = category_block[0]
             up_coming = category_block[1]
 
+            Movie.objects.all().delete()
             # fetch now_playing movies
             self.stdout.write(self.style.SUCCESS("Fetching Now Playing ..."))
             for movie in now_playing.find_all("div", "movie"):
                 name = str(movie.find("h4", "movie-title").text)
                 event_id = int(movie.find("a").get('href').split('=')[-1])
-                image = urljoin(_base_url, _thumb_url % event_id)
+                poster = urljoin(_base_url, _thumb_url % event_id)
                 status = 'NP'
-                mv, _ = Movie.objects.update_or_create(event_id=event_id, defaults={'name': name, 'image': image, 'status': status})
+                mv, _ = Movie.objects.update_or_create(event_id=event_id, defaults={'name': name, 'poster': poster, 'status': status})
 
                 # fetch other details like runtime, trailer and plot from details url
                 _det_url = urljoin(_base_url, _np_detail_url % event_id)
@@ -52,9 +53,9 @@ class Command(BaseCommand):
             for movie in up_coming.find_all("div", "movie"):
                 name = str(movie.find("h4", "movie-title").text)
                 event_id = int(movie.find("a").get('href').split('=')[-1])
-                image = urljoin(_base_url, _thumb_url % event_id)
+                poster = urljoin(_base_url, _thumb_url % event_id)
                 status = 'UP'
-                mv, _ = Movie.objects.update_or_create(event_id=event_id, defaults={'name': name, 'image': image, 'status': status})
+                mv, _ = Movie.objects.update_or_create(event_id=event_id, defaults={'name': name, 'poster': poster, 'status': status})
 
                 # fetch other details like runtime, trailer and plot from details url
                 _det_url = urljoin(_base_url, _up_detail_url % event_id)

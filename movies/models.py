@@ -9,6 +9,7 @@ class MovieUpdatedManager(models.Manager):
 class Movie(models.Model):
 
     recent = MovieUpdatedManager()
+    objects = models.Manager()
 
     class Meta:
         app_label = 'movies'
