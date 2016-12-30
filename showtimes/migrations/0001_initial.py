@@ -10,10 +10,6 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('movies', '0005_auto_20161229_0850'),
-    ]
-
     operations = [
         migrations.CreateModel(
             name='Showtime',
