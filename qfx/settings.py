@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'd#$no$ilr^%2yi7^wyi!2c_nd!n-xdh9nj&f_$t^0@dxu@wie8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -78,17 +78,21 @@ WSGI_APPLICATION = 'qfx.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dc5dgrqj90nr06',
-        'USER': 'qhmvglvvavhvop',
-        'PASSWORD': '50cad49dba980632492bf4b3dc9976e92793d45ecade383097962cdeddd62a58',
-        'HOST': 'ec2-54-163-240-7.compute-1.amazonaws.com',
-        'PORT': '5432',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'dc5dgrqj90nr06',
+#         'USER': 'qhmvglvvavhvop',
+#         'PASSWORD': '50cad49dba980632492bf4b3dc9976e92793d45ecade383097962cdeddd62a58',
+#         'HOST': 'ec2-54-163-240-7.compute-1.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
 
+import dj_database_url
+DATABASES['default'] = dj_database_url.config()
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -137,5 +141,5 @@ STATIC_URL = '/static/'
 
 try:
     from local_settings import *
-except:
+except ImportError:
     pass
