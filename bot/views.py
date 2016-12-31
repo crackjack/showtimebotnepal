@@ -5,14 +5,26 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http.response import HttpResponse
 import json
 import requests
+from movies.models import Movie
 
-_PAGE_TOKEN = 'EAAXmqZAwr6xoBACfVnhcUgZA09ATR9SYRU6y3i0YtZCFeIZCyxxZAgZCNZCn20eeK0lPHZBKOBXgqaAzUp1jMPzqHkdX1ZBnumZBJbz91pEfvPrpbW71EZA9BCPC46ybFehIGsaAPdL4ZCpQDKodHKAiZA0WJGxG1BZCiYXICZBPpoRbPoJbwZDZD'
+_PAGE_TOKEN = 'EAAXmqZAwr6xoBAKtpxW7m3tM6XrBDFFfWiQZABNZA3JzXcs7hsTspxryngttkkzeUYZCjJ2wG8DEaekZAZAIXc1kAwiLtfj2jhFYbOcuGaJRDaWyj0OqCdrxZApZCBmlUZC2p9DIAHBKJ5ghGEuUQdTFox6WvXt8cZA7cm7VDt3ZBcNJwZDZD'
 
 def post_facebook_message(fbid, recevied_message):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":recevied_message}})
     status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
-    # print(status.json())
+    print(status.json())
+
+def get_np_movies():
+    return Movie.objects.filter(status='NP')
+
+def get_up_movies():
+    return Movie.objects.filter(status='UP')
+
+# def get_showtime(mvid, freq):
+
+#     if freq == 1: # today
+#         return Showtime.objects.filter(date=datetime.datetime.utcnow().date, )
 
 class BotView(generic.View):
     def get(self, request, *args, **kwargs):
@@ -37,6 +49,10 @@ class BotView(generic.View):
                 # This might be delivery, optin, postback for other events
                 if 'message' in message:
                     # Print the message to the terminal
-                    # print(message)
-                    post_facebook_message(message['sender']['id'], message['message']['text'])
+                    kw = message.get('message')['text']
+                    if kw == 'now':
+                        movies = get_np_movies()
+                        for mv in movies:
+                            post_facebook_message(message['sender']['id'], str(mv.name))    
+                    # post_facebook_message(message['sender']['id'], message['message']['text'])
         return HttpResponse()
