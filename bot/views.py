@@ -73,38 +73,38 @@ def show_movie_detail(fbid, _data):
     
     msg_dict['message'] = dict()
 
-#     sss = json.dumps({
-#   "recipient":{
-#     "id":fbid
-#   }, "message":{
-#     "attachment":{
-#       "type":"template",
-#       "payload":{
-#         "template_type":"generic",
-#         "elements": [{
-#             "title": "Yo...",
-#             "image_url":"https://petersfancybrownhats.com/company_image.png",
-#             "subtitle":"Wve got the right hat for everyone.",
-#             "buttons":[
-#               {
-#                 "type":"web_url",
-#                 "url":"aa",
-#                 "title":"Watch Trailer"
-#               },
-#               {
-#                 "type":"web_url",
-#                 "url":"bb",
-#                 "title":"Watch Trailer"
-#               },
-#             ]
-#         }],
-#       }
-#     }
-#   }
+  #   sss = json.dumps({
+  # "recipient":{
+  #   "id":fbid
+  # }, "message":{
+  #   "attachment":{
+  #     "type":"template",
+  #     "payload":{
+  #       "template_type":"generic",
+  #       "elements": [{
+  #           "title": "Yo...",
+  #           "image_url":"https://petersfancybrownhats.com/company_image.png",
+  #           "subtitle":"Wve got the right hat for everyone.",
+  #           "buttons":[
+  #             {
+  #               "type":"web_url",
+  #               "url":"aa",
+  #               "title":"Watch Trailer"
+  #             },
+  #             {
+  #               "type":"web_url",
+  #               "url":"bb",
+  #               "title":"Watch Trailer"
+  #             },
+  #           ]
+  #       }],
+  #     }
+  #   }
+  # }
     
 # })
 
-#     print sss
+    # print sss
 
     qr = []
     for d in _data:
@@ -121,7 +121,7 @@ def show_movie_detail(fbid, _data):
 
     print(response_msg)
 
-    status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=sss)
+    status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
 
 class BotView(generic.View):
     def get(self, request, *args, **kwargs):
@@ -152,7 +152,7 @@ class BotView(generic.View):
                 if 'message' in message:
                     fb_id = message['sender']['id']
                     # Print the message to the terminal
-                    kw = message.get('message')['text'].lower()
+                    kw = message.get('message')['text'].lower() if 'text' in message.get('message') else None
                     if kw == 'now':
                         _data = movies_object.filter(status='NP')
                         show_movie_list(message['sender']['id'], _data)
