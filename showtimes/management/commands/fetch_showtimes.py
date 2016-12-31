@@ -35,7 +35,7 @@ class Command(BaseCommand):
                             continue
 
                         for st in show_times:
-                            time = st.text.strip()
+                            time = st.text.strip().replace('\n', '').replace('Hrs', '')
                             _url = st.get('href')
 
                             booking_url = urljoin(_base_url, _url)

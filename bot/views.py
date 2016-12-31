@@ -6,25 +6,122 @@ from django.http.response import HttpResponse
 import json
 import requests
 from movies.models import Movie
+from showtimes.models import Showtime
 
 _PAGE_TOKEN = 'EAAXmqZAwr6xoBAKtpxW7m3tM6XrBDFFfWiQZABNZA3JzXcs7hsTspxryngttkkzeUYZCjJ2wG8DEaekZAZAIXc1kAwiLtfj2jhFYbOcuGaJRDaWyj0OqCdrxZApZCBmlUZC2p9DIAHBKJ5ghGEuUQdTFox6WvXt8cZA7cm7VDt3ZBcNJwZDZD'
 
-def post_facebook_message(fbid, recevied_message):
+def post_facebook_message(fbid, _data, _type):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
-    response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":recevied_message}})
+    msg_dict = dict()
+    msg_dict['recipient'] = {"id":fbid}
+    if _type == 'quick':
+        msg_dict['message'] = dict()
+        qr = []
+        for d in _data:
+            qr_item = dict()
+            qr_item['content_type'] = "text"
+            qr_item['title'] = "%s" % str(d.name)
+            qr_item['payload'] = "%s" % str(d.name)
+
+            qr.append(qr_item)
+
+        msg_dict['message']['text'] = "Pick a movie:"
+        msg_dict['message']['quick_replies'] = qr
+        response_msg = json.dumps(msg_dict)
+    else:
+        response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":_data}})
+
+    print(response_msg)
+
     status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
-    print(status.json())
 
-def get_np_movies():
-    return Movie.objects.filter(status='NP')
+def show_text_message(fbid, _data):
+    post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
+    response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":_data}})
 
-def get_up_movies():
-    return Movie.objects.filter(status='UP')
+    print(response_msg)
 
-# def get_showtime(mvid, freq):
+    status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
 
-#     if freq == 1: # today
-#         return Showtime.objects.filter(date=datetime.datetime.utcnow().date, )
+def show_movie_list(fbid, _data):
+    post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
+    msg_dict = dict()
+    msg_dict['recipient'] = {"id":fbid}
+    
+    msg_dict['message'] = dict()
+    qr = []
+    for d in _data:
+        qr_item = dict()
+        qr_item['content_type'] = "text"
+        qr_item['title'] = "%s" % str(d.name)
+        qr_item['payload'] = "%s" % str(d.name)
+
+        qr.append(qr_item)
+
+    msg_dict['message']['text'] = "What Movie?"
+    msg_dict['message']['quick_replies'] = qr
+    response_msg = json.dumps(msg_dict)
+
+    print(response_msg)
+
+    status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
+
+def show_movie_detail(fbid, _data):
+    post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
+    msg_dict = dict()
+    msg_dict['recipient'] = {"id":fbid}
+    
+    msg_dict['message'] = dict()
+
+#     sss = json.dumps({
+#   "recipient":{
+#     "id":fbid
+#   }, "message":{
+#     "attachment":{
+#       "type":"template",
+#       "payload":{
+#         "template_type":"generic",
+#         "elements": [{
+#             "title": "Yo...",
+#             "image_url":"https://petersfancybrownhats.com/company_image.png",
+#             "subtitle":"Wve got the right hat for everyone.",
+#             "buttons":[
+#               {
+#                 "type":"web_url",
+#                 "url":"aa",
+#                 "title":"Watch Trailer"
+#               },
+#               {
+#                 "type":"web_url",
+#                 "url":"bb",
+#                 "title":"Watch Trailer"
+#               },
+#             ]
+#         }],
+#       }
+#     }
+#   }
+    
+# })
+
+#     print sss
+
+    qr = []
+    for d in _data:
+        qr_item = dict()
+        qr_item['content_type'] = "text"
+        qr_item['title'] = "%s @ %s" % (str(d.time), str(d.cinema))
+        qr_item['payload'] = "%s @ %s" % (str(d.time), str(d.cinema))
+
+        qr.append(qr_item)
+
+    msg_dict['message']['text'] = "When and Where?"
+    msg_dict['message']['quick_replies'] = qr
+    response_msg = json.dumps(msg_dict)
+
+    print(response_msg)
+
+    status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=sss)
 
 class BotView(generic.View):
     def get(self, request, *args, **kwargs):
@@ -43,16 +140,32 @@ class BotView(generic.View):
         incoming_message = json.loads(self.request.body.decode('utf-8'))
         # Facebook recommends going through every entry since they might send
         # multiple messages in a single call during high load
+        movies_object = Movie.objects
+        showtime_object = Showtime.objects
+        list_movies = [str(mv.name).lower() for mv in movies_object.all()]
+        _type = 'quick'
+        _data = 'Sorry, I cannot handle the request.'
         for entry in incoming_message['entry']:
             for message in entry['messaging']:
                 # Check to make sure the received call is a message call
                 # This might be delivery, optin, postback for other events
                 if 'message' in message:
+                    fb_id = message['sender']['id']
                     # Print the message to the terminal
-                    kw = message.get('message')['text']
+                    kw = message.get('message')['text'].lower()
                     if kw == 'now':
-                        movies = get_np_movies()
-                        for mv in movies:
-                            post_facebook_message(message['sender']['id'], str(mv.name))    
-                    # post_facebook_message(message['sender']['id'], message['message']['text'])
+                        _data = movies_object.filter(status='NP')
+                        show_movie_list(message['sender']['id'], _data)
+                    elif kw in list_movies:
+                        try:
+                            mv = movies_object.get(name__iexact=kw)
+                            _data = showtime_object.filter(movie_id=mv.id)
+                            show_movie_detail(fb_id, _data)
+                        except Movie.DoesNotExist:
+                            show_text_message(fb_id, _data)
+
+                    else:
+                        show_text_message(fb_id, _data)
+
+                    # post_facebook_message(message['sender']['id'], _data, _type)
         return HttpResponse()
