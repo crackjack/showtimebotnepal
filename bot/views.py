@@ -171,7 +171,7 @@ class BotView(generic.View):
                         element = Element(title="test", image_url="", subtitle="subtitle", item_url="http://arsenal.com")
                         elements.append(element)
                         bot.send_generic_message(fb_id, elements)
-                    elif kw = 'mmm':
+                    elif kw == 'mmm':
                         from message import SendMessage
                         message = SendMessage(fb_id)
                         project_styletrip = GenericElement('Chinese 111',
@@ -189,7 +189,7 @@ class BotView(generic.View):
                                                                             url='https://github.com/enginebai/Movie-lol-android')
                                                            ])
                         message.build_generic_message([project_styletrip, project_movie_lol]).send_message()
-                    elif kw = 'zzz':
+                    elif kw == 'zzz':
                         from messengerbot import MessengerClient, messages, attachments, templates, elements
                         messenger = MessengerClient(access_token=_PAGE_TOKEN)
                         recipient = messages.Recipient(recipient_id=fb_id)
