@@ -165,6 +165,7 @@ class BotView(generic.View):
                             show_text_message(fb_id, _data)
                     elif kw == 'test':
                         from pymessenger.bot import Bot
+                        from pymessenger import Element
                         bot = Bot(_PAGE_TOKEN)
                         elements = []
                         element = Element(title="test", image_url="<arsenal_logo.png>", subtitle="subtitle", item_url="http://arsenal.com")
