@@ -4,7 +4,6 @@ import json
 from enum import Enum
 
 import requests
-import config
 
 __author__ = 'enginebai'
 
@@ -161,11 +160,12 @@ class SendMessage:
         return self
 
     def send_message(self):
+        _PAGE_TOKEN = 'EAAXmqZAwr6xoBAKtpxW7m3tM6XrBDFFfWiQZABNZA3JzXcs7hsTspxryngttkkzeUYZCjJ2wG8DEaekZAZAIXc1kAwiLtfj2jhFYbOcuGaJRDaWyj0OqCdrxZApZCBmlUZC2p9DIAHBKJ5ghGEuUQdTFox6WvXt8cZA7cm7VDt3ZBcNJwZDZD'
         if self.receipient_value is None:
             print("Please set the recipient!")
             return
         post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token={token}'.format(
-            token=config.FB_TOKEN)
+            token=_PAGE_TOKEN)
         response_message = json.dumps(self.message_data)
         # print(response_message)
         req = requests.post(post_message_url,
