@@ -170,7 +170,7 @@ class BotView(generic.View):
                         elements = []
                         element = Element(title="test", image_url="<arsenal_logo.png>", subtitle="subtitle", item_url="http://arsenal.com")
                         elements.append(element)
-                        bot.send_generic_message(recipient_id, elements)
+                        bot.send_generic_message(fb_id, elements)
                     else:
                         show_text_message(fb_id, _data)
 
