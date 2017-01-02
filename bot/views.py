@@ -47,7 +47,7 @@ def show_movie_list(fbid, _data):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     msg_dict = dict()
     msg_dict['recipient'] = {"id":fbid}
-    
+
     msg_dict['message'] = dict()
     qr = []
     for d in _data:
@@ -70,7 +70,7 @@ def show_movie_detail(fbid, _data):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     msg_dict = dict()
     msg_dict['recipient'] = {"id":fbid}
-    
+
     msg_dict['message'] = dict()
 
   #   sss = json.dumps({
@@ -101,7 +101,7 @@ def show_movie_detail(fbid, _data):
   #     }
   #   }
   # }
-    
+
 # })
 
     # print sss
@@ -163,7 +163,13 @@ class BotView(generic.View):
                             show_movie_detail(fb_id, _data)
                         except Movie.DoesNotExist:
                             show_text_message(fb_id, _data)
-
+                    elif kw == 'test':
+                        from pymessenger.bot import Bot
+                        bot = Bot(_PAGE_TOKEN)
+                        elements = []
+                        element = Element(title="test", image_url="<arsenal_logo.png>", subtitle="subtitle", item_url="http://arsenal.com")
+                        elements.append(element)
+                        bot.send_generic_message(recipient_id, elements)
                     else:
                         show_text_message(fb_id, _data)
 
