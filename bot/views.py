@@ -171,24 +171,24 @@ class BotView(generic.View):
                         element = Element(title="test", image_url="", subtitle="subtitle", item_url="http://arsenal.com")
                         elements.append(element)
                         bot.send_generic_message(fb_id, elements)
-                    elif kw == 'two':
-                        from message import SendMessage
-                        message = SendMessage(fb_id)
-                        project_styletrip = GenericElement('Chinese 111',
-                                                           'do not say',
-                                                           'styletrip/introduction.jpeg', [
-                                                               ActionButton(ButtonType.POSTBACK,
-                                                                            'test',
-                                                                            payload=Payload.INTRODUCE.name)
-                                                           ])
-                        project_movie_lol = GenericElement('Movie lol App',
-                                                           'some pp',
-                                                           'movielol/introduction.jpeg', [
-                                                               ActionButton(ButtonType.WEB_URL,
-                                                                            'GitHub',
-                                                                            url='https://github.com/enginebai/Movie-lol-android')
-                                                           ])
-                        message.build_generic_message([project_styletrip, project_movie_lol]).send_message()
+                    # elif kw == 'two':
+                    #     from message import SendMessage
+                    #     message = SendMessage(fb_id)
+                    #     project_styletrip = GenericElement('Chinese 111',
+                    #                                        'do not say',
+                    #                                        'styletrip/introduction.jpeg', [
+                    #                                            ActionButton(ButtonType.POSTBACK,
+                    #                                                         'test',
+                    #                                                         payload=Payload.INTRODUCE.name)
+                    #                                        ])
+                    #     project_movie_lol = GenericElement('Movie lol App',
+                    #                                        'some pp',
+                    #                                        'movielol/introduction.jpeg', [
+                    #                                            ActionButton(ButtonType.WEB_URL,
+                    #                                                         'GitHub',
+                    #                                                         url='https://github.com/enginebai/Movie-lol-android')
+                    #                                        ])
+                    #     message.build_generic_message([project_styletrip, project_movie_lol]).send_message()
                     elif kw == 'three':
                         from messengerbot import MessengerClient, messages, attachments, templates, elements
                         messenger = MessengerClient(access_token=_PAGE_TOKEN)
