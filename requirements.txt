@@ -28,3 +28,4 @@ websocket-client==0.40.0
 whitenoise==3.2.2
 psycopg2==2.6.2
 pymessenger==0.0.7.0
+messengerbot==0.1.4

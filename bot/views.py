@@ -168,9 +168,51 @@ class BotView(generic.View):
                         from pymessenger import Element
                         bot = Bot(_PAGE_TOKEN)
                         elements = []
-                        element = Element(title="test", image_url="<arsenal_logo.png>", subtitle="subtitle", item_url="http://arsenal.com")
+                        element = Element(title="test", image_url="", subtitle="subtitle", item_url="http://arsenal.com")
                         elements.append(element)
                         bot.send_generic_message(fb_id, elements)
+                    elif kw = 'mmm':
+                        from message import SendMessage
+                        message = SendMessage(fb_id)
+                        project_styletrip = GenericElement('Chinese 111',
+                                                           'do not say',
+                                                           'styletrip/introduction.jpeg', [
+                                                               ActionButton(ButtonType.POSTBACK,
+                                                                            'test',
+                                                                            payload=Payload.INTRODUCE.name)
+                                                           ])
+                        project_movie_lol = GenericElement('Movie lol App',
+                                                           'some pp',
+                                                           'movielol/introduction.jpeg', [
+                                                               ActionButton(ButtonType.WEB_URL,
+                                                                            'GitHub',
+                                                                            url='https://github.com/enginebai/Movie-lol-android')
+                                                           ])
+                        message.build_generic_message([project_styletrip, project_movie_lol]).send_message()
+                    elif kw = 'zzz':
+                        from messengerbot import MessengerClient, messages, attachments, templates, elements
+                        messenger = MessengerClient(access_token=_PAGE_TOKEN)
+                        recipient = messages.Recipient(recipient_id=fb_id)
+                        # Send button template
+                        web_button = elements.WebUrlButton(
+                           title='Show website',
+                           url='https://petersapparel.parseapp.com'
+                        )
+                        postback_button = elements.PostbackButton(
+                           title='Start chatting',
+                           payload='USER_DEFINED_PAYLOAD'
+                        )
+                        template = templates.ButtonTemplate(
+                           text='What do you want to do next?',
+                           buttons=[
+                               web_button, postback_button
+                           ]
+                        )
+                        attachment = attachments.TemplateAttachment(template=template)
+
+message = messages.Message(attachment=attachment)
+request = messages.MessageRequest(recipient, message)
+messenger.send(request)
                     else:
                         show_text_message(fb_id, _data)
 
