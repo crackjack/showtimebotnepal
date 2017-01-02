@@ -210,9 +210,9 @@ class BotView(generic.View):
                         )
                         attachment = attachments.TemplateAttachment(template=template)
 
-message = messages.Message(attachment=attachment)
-request = messages.MessageRequest(recipient, message)
-messenger.send(request)
+                        message = messages.Message(attachment=attachment)
+                        request = messages.MessageRequest(recipient, message)
+                        messenger.send(request)
                     else:
                         show_text_message(fb_id, _data)
 
