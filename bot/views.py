@@ -67,7 +67,7 @@ def show_movie_list(fbid, _data):
 
     status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
 
-def show_welcome_message():
+def show_welcome_message(recipient):
     btn_now_playing = elements.PostbackButton(
        title='Now Playing',
        payload='now'
@@ -168,7 +168,7 @@ class BotView(generic.View):
                     # Print the message to the terminal
                     kw = message.get('message')['text'].lower() if 'text' in message.get('message') else None
                     if kw == 'yo':
-                        show_welcome_message()
+                        show_welcome_message(recipient)
                     elif kw == 'now':
                         _data = movies_object.filter(status='NP')
                         show_movies(recipient, _data)
