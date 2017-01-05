@@ -46,6 +46,44 @@ def show_text_message(fbid, _data):
     status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
 
 
+def show_mov_temp(fbid):
+    post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
+    response_msg = dict()
+
+    response_msg['recipient'] = {'id': fbid}
+
+    btns = [{'title': 'Book Now', 'type': 'web_url', 'url': 'http://niteshrijal.com.np', 'messenger_extensions': True,
+             'webview_height_ratio': 'tall', 'fallback_url': 'http://niteshrijal.com.np'}]
+
+    defac = {"type": "web_url", "url": "http://niteshrijal.com.np", "messenger_extensions": True,
+             "webview_height_ratio": "tall", "fallback_url": "http://niteshrijal.com.np"
+             }
+
+    elems = [{"title": "Classic White T-Shirt",
+              "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
+              "subtitle": "100% Cotton, 200% Comfortable",
+              "default_action": defac,
+              "buttons": btns
+              }]
+
+    paylo = {
+        "template_type": "list",
+        "top_element_style": "compact",
+        "elements": elems
+    }
+
+    attc = {
+        "type": "template",
+        "payload": paylo
+    }
+
+    response_msg["message"] = attc
+
+    print(response_msg)
+
+    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
+
+
 def show_movie_list(fbid, _data):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     msg_dict = dict()
@@ -172,7 +210,8 @@ class BotView(generic.View):
                     kw = message.get('message')['text'].lower() if 'text' in message.get('message') else None
                     print "here: %s" % str(kw)
                     if kw == 'yo':
-                        show_welcome_message(messenger, recipient)
+                        show_mov_temp(fb_id)
+                        # show_welcome_message(messenger, recipient)
                     elif kw == 'now':
                         _data = movies_object.filter(status='NP')
                         show_movies(messenger, recipient, _data)
