@@ -82,9 +82,10 @@ def show_mov_temp(fbid):
 
     response_msg["message"] = {"attachment": attc}
 
-    print(response_msg)
+    mm = json.dumps(response_msg)
+    print(mm)
 
-    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=json.dumps(response_msg))
+    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=mm)
 
 
 def show_movie_list(fbid, _data):
