@@ -92,7 +92,7 @@ def show_welcome_message(messenger, recipient):
     messenger.send(request)
 
 def show_movies(messenger, recipient, _data):
-    buttons = []
+    btns = list()
 
     for d in _data:
         btn = elements.PostbackButton(
@@ -100,11 +100,11 @@ def show_movies(messenger, recipient, _data):
                 payload=str(d.name)
         )
 
-        buttons.append(btn)
+        btns.append(btn)
 
     template_btn = templates.ButtonTemplate(
        text='Which Movie?',
-       buttons=buttons
+       buttons=btns
     )
 
     attachment = attachments.TemplateAttachment(template=template_btn)
