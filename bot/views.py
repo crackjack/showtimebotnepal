@@ -207,6 +207,7 @@ class BotView(generic.View):
                     fb_id = message['sender']['id']
                     messenger = MessengerClient(access_token=_PAGE_TOKEN)
                     recipient = messages.Recipient(recipient_id=fb_id)
+                    _data = 'Sorry, I cannot handle that request.'
                     kw = message.get('message')['text'].lower() if 'text' in message.get('message') else None
                     print "here: %s" % str(kw)
                     if kw == 'yo':
