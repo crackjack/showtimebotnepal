@@ -50,7 +50,7 @@ def show_mov_temp(fbid):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     response_msg = dict()
 
-    response_msg['recipient'] = {"id": fbid}
+    response_msg["recipient"] = {"id": fbid}
 
     btns = [{"title": "Book Now", "type": "web_url", "url": "http://niteshrijal.com.np", "messenger_extensions": True,
              "webview_height_ratio": "tall", "fallback_url": "http://niteshrijal.com.np"}]
