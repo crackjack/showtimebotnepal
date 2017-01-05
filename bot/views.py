@@ -46,7 +46,7 @@ def show_text_message(fbid, _data):
     status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
 
 
-def show_mov_temp(fbid, movies):
+def show_movies(fbid, movies):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     response_msg = dict()
 
@@ -58,6 +58,11 @@ def show_mov_temp(fbid, movies):
     defac = {"type": "web_url", "url": "https://niteshrijal.com.np", "messenger_extensions": True,
              "webview_height_ratio": "tall", "fallback_url": "https://niteshrijal.com.np"
              }
+
+    elements = []
+    for mv in movies:
+        el = {"title": str(mv.title), "image_url": mv.poster, "subtitle": mv.plot}
+        elements.append(el)
 
     elems = [{"title": "Classic White T-Shirt",
               "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
@@ -81,48 +86,49 @@ def show_mov_temp(fbid, movies):
 
     last_btn = [{"title": "View More", "type": "postback", "payload": "now"}]
 
-    paylo = {
+    payload = {
         "template_type": "list",
         "top_element_style": "compact",
-        "elements": elems,
+        "elements": elements,
         # "buttons": last_btn
     }
 
-    attc = {
+    attachment = {
         "type": "template",
-        "payload": paylo,
+        "payload": payload,
     }
 
-    response_msg["message"] = {"attachment": attc}
+    response_msg["message"] = {"attachment": attachment}
 
-    mm = json.dumps(response_msg)
-    print(mm)
+    data = json.dumps(response_msg)
 
-    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=mm)
+    print(data)
+
+    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=data)
 
 
-def show_movie_list(fbid, _data):
-    post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
-    msg_dict = dict()
-    msg_dict['recipient'] = {"id": fbid}
-
-    msg_dict['message'] = dict()
-    qr = []
-    for d in _data:
-        qr_item = dict()
-        qr_item['content_type'] = "text"
-        qr_item['title'] = "%s" % str(d.name)
-        qr_item['payload'] = "%s" % str(d.name)
-
-        qr.append(qr_item)
-
-    msg_dict['message']['text'] = "What Movie?"
-    msg_dict['message']['quick_replies'] = qr
-    response_msg = json.dumps(msg_dict)
-
-    print(response_msg)
-
-    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
+# def show_movie_list(fbid, _data):
+#     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
+#     msg_dict = dict()
+#     msg_dict['recipient'] = {"id": fbid}
+#
+#     msg_dict['message'] = dict()
+#     qr = []
+#     for d in _data:
+#         qr_item = dict()
+#         qr_item['content_type'] = "text"
+#         qr_item['title'] = "%s" % str(d.name)
+#         qr_item['payload'] = "%s" % str(d.name)
+#
+#         qr.append(qr_item)
+#
+#     msg_dict['message']['text'] = "What Movie?"
+#     msg_dict['message']['quick_replies'] = qr
+#     response_msg = json.dumps(msg_dict)
+#
+#     print(response_msg)
+#
+#     status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
 
 
 def show_welcome_message(messenger, recipient):
@@ -148,27 +154,27 @@ def show_welcome_message(messenger, recipient):
     messenger.send(request)
 
 
-def show_movies(messenger, recipient, _data):
-    btns = []
-
-    for d in _data:
-        btn = elements.PostbackButton(
-            title=str(d.name),
-            payload=str(d.name)
-        )
-
-        btns.append(btn)
-
-    template_btn = templates.ButtonTemplate(
-        text='Which Movie?',
-        buttons=btns
-    )
-
-    attachment = attachments.TemplateAttachment(template=template_btn)
-
-    message = messages.Message(attachment=attachment)
-    request = messages.MessageRequest(recipient, message)
-    messenger.send(request)
+# def show_movies(messenger, recipient, _data):
+#     btns = []
+#
+#     for d in _data:
+#         btn = elements.PostbackButton(
+#             title=str(d.name),
+#             payload=str(d.name)
+#         )
+#
+#         btns.append(btn)
+#
+#     template_btn = templates.ButtonTemplate(
+#         text='Which Movie?',
+#         buttons=btns
+#     )
+#
+#     attachment = attachments.TemplateAttachment(template=template_btn)
+#
+#     message = messages.Message(attachment=attachment)
+#     request = messages.MessageRequest(recipient, message)
+#     messenger.send(request)
 
 
 def show_movie_detail(fbid, _data):
@@ -213,38 +219,47 @@ class BotView(generic.View):
         incoming_message = json.loads(self.request.body.decode('utf-8'))
         # Facebook recommends going through every entry since they might send
         # multiple messages in a single call during high load
-        movies_object = Movie.objects
-        showtime_object = Showtime.objects
-        list_movies = [str(mv.name).lower() for mv in movies_object.all()]
         for entry in incoming_message['entry']:
             for message in entry['messaging']:
                 # Check to make sure the received call is a message call
                 # This might be delivery, optin, postback for other events
+                kw = None
+                fb_id = message['sender']['id']
+
                 if 'message' in message:
-                    fb_id = message['sender']['id']
-                    messenger = MessengerClient(access_token=_PAGE_TOKEN)
-                    recipient = messages.Recipient(recipient_id=fb_id)
-                    _data = 'Sorry, I cannot handle that request.'
                     kw = message.get('message')['text'].lower() if 'text' in message.get('message') else None
-                    print "here: %s" % str(kw)
-                    if kw == 'yo':
-                        show_welcome_message(messenger, recipient)
-                    elif kw == 'now':
-                        _data = movies_object.filter(status='NP')
-                        show_mov_temp(fb_id, _data)
-                    elif kw == 'up':
-                        _data = movies_object.filter(status='UP')
-                        show_movies(messenger, recipient, _data)
-                    elif kw in list_movies:
-                        try:
-                            mv = movies_object.get(name__iexact=kw)
-                            _data = showtime_object.filter(movie_id=mv.id)
-                            show_movie_detail(fb_id, _data)
-                        except Movie.DoesNotExist:
-                            show_text_message(fb_id, _data)
-                    else:
-                        show_text_message(fb_id, _data)
 
                 if 'postback' in message:
-                    print message
+                    kw = message.get('postback')['payload'].lower() if 'payload' in message.get('postback') else None
+
+                if kw:
+                    self.take_action(kw, fb_id)
+
         return HttpResponse()
+
+    def take_action(self, kw, fb_id):
+        _data = 'Sorry, I cannot handle that request.'
+        movies_object = Movie.objects
+        showtime_object = Showtime.objects
+        list_movies = [str(mv.name).lower() for mv in movies_object.all()]
+
+        messenger = MessengerClient(access_token=_PAGE_TOKEN)
+        recipient = messages.Recipient(recipient_id=fb_id)
+
+        if kw == 'yo':
+            show_welcome_message(messenger, recipient)
+        elif kw == 'now':
+            _data = movies_object.filter(status='NP')
+            show_mov_temp(fb_id, _data)
+        elif kw == 'up':
+            _data = movies_object.filter(status='UP')
+            show_movies(messenger, recipient, _data)
+        elif kw in list_movies:
+            try:
+                mv = movies_object.get(name__iexact=kw)
+                _data = showtime_object.filter(movie_id=mv.id)
+                show_movie_detail(fb_id, _data)
+            except Movie.DoesNotExist:
+                show_text_message(fb_id, _data)
+        else:
+            show_text_message(fb_id, _data)
