@@ -66,18 +66,21 @@ def show_mov_temp(fbid):
               "buttons": btns
               }]
 
+    last_btn = {"buttons": [{"title": "View More", "type": "postback", "payload": "now"}]}
+
     paylo = {
         "template_type": "list",
         "top_element_style": "compact",
-        "elements": elems
+        "elements": elems,
+        "buttons": last_btn
     }
 
     attc = {
         "type": "template",
-        "payload": paylo
+        "payload": paylo,
     }
 
-    response_msg["message"] = attc
+    response_msg["message"] = {'attachment': attc}
 
     print(response_msg)
 
