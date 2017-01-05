@@ -244,4 +244,7 @@ class BotView(generic.View):
                             show_text_message(fb_id, _data)
                     else:
                         show_text_message(fb_id, _data)
+
+                if 'postback' in message:
+                    print message
         return HttpResponse()
