@@ -52,11 +52,11 @@ def show_mov_temp(fbid):
 
     response_msg["recipient"] = {"id": fbid}
 
-    btns = [{"title": "Book Now", "type": "web_url", "url": "http://niteshrijal.com.np", "messenger_extensions": True,
-             "webview_height_ratio": "tall", "fallback_url": "http://niteshrijal.com.np"}]
+    btns = [{"title": "Book Now", "type": "web_url", "url": "https://niteshrijal.com.np", "messenger_extensions": True,
+             "webview_height_ratio": "tall", "fallback_url": "https://niteshrijal.com.np"}]
 
-    defac = {"type": "web_url", "url": "http://niteshrijal.com.np", "messenger_extensions": True,
-             "webview_height_ratio": "tall", "fallback_url": "http://niteshrijal.com.np"
+    defac = {"type": "web_url", "url": "https://niteshrijal.com.np", "messenger_extensions": True,
+             "webview_height_ratio": "tall", "fallback_url": "https://niteshrijal.com.np"
              }
 
     elems = [{"title": "Classic White T-Shirt",
@@ -64,7 +64,20 @@ def show_mov_temp(fbid):
               "subtitle": "10 Cotton, 20 Comfortable",
               "default_action": defac,
               "buttons": btns
-              }]
+              },
+             {"title": "Classic White T-Shirt",
+              "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
+              "subtitle": "10 Cotton, 20 Comfortable",
+              "default_action": defac,
+              "buttons": btns
+              },
+             {"title": "Classic White T-Shirt",
+              "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
+              "subtitle": "10 Cotton, 20 Comfortable",
+              "default_action": defac,
+              "buttons": btns
+              }
+             ]
 
     last_btn = [{"title": "View More", "type": "postback", "payload": "now"}]
 
