@@ -100,7 +100,7 @@ def show_movies(messenger, recipient, _data):
                 payload=str(d.name)
         )
 
-        buttons.append(d)
+        buttons.append(btn)
 
     template_btn = templates.ButtonTemplate(
        text='Which Movie?',
