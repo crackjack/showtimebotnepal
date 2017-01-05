@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.views import generic
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -11,10 +10,11 @@ from showtimes.models import Showtime
 
 _PAGE_TOKEN = 'EAAXmqZAwr6xoBAKtpxW7m3tM6XrBDFFfWiQZABNZA3JzXcs7hsTspxryngttkkzeUYZCjJ2wG8DEaekZAZAIXc1kAwiLtfj2jhFYbOcuGaJRDaWyj0OqCdrxZApZCBmlUZC2p9DIAHBKJ5ghGEuUQdTFox6WvXt8cZA7cm7VDt3ZBcNJwZDZD'
 
+
 def post_facebook_message(fbid, _data, _type):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     msg_dict = dict()
-    msg_dict['recipient'] = {"id":fbid}
+    msg_dict['recipient'] = {"id": fbid}
     if _type == 'quick':
         msg_dict['message'] = dict()
         qr = []
@@ -30,24 +30,26 @@ def post_facebook_message(fbid, _data, _type):
         msg_dict['message']['quick_replies'] = qr
         response_msg = json.dumps(msg_dict)
     else:
-        response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":_data}})
+        response_msg = json.dumps({"recipient": {"id": fbid}, "message": {"text": _data}})
 
     print(response_msg)
 
-    status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
+    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
+
 
 def show_text_message(fbid, _data):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
-    response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":_data}})
+    response_msg = json.dumps({"recipient": {"id": fbid}, "message": {"text": _data}})
 
     print(response_msg)
 
-    status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
+    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
+
 
 def show_movie_list(fbid, _data):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     msg_dict = dict()
-    msg_dict['recipient'] = {"id":fbid}
+    msg_dict['recipient'] = {"id": fbid}
 
     msg_dict['message'] = dict()
     qr = []
@@ -65,24 +67,23 @@ def show_movie_list(fbid, _data):
 
     print(response_msg)
 
-    status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
+    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
+
 
 def show_welcome_message(messenger, recipient):
     btn_now_playing = elements.PostbackButton(
-       title='Now Playing',
-       payload='now'
+        title='Now Playing',
+        payload='now'
     )
 
     btn_up_coming = elements.PostbackButton(
-       title='Upcoming',
-       payload='up'
+        title='Upcoming',
+        payload='up'
     )
 
     template_btn = templates.ButtonTemplate(
-       text='What movies are you looking for?',
-       buttons=[
-           btn_now_playing, btn_up_coming
-       ]
+        text='What movies are you looking for?',
+        buttons=[btn_now_playing, btn_up_coming]
     )
 
     attachment = attachments.TemplateAttachment(template=template_btn)
@@ -91,20 +92,21 @@ def show_welcome_message(messenger, recipient):
     request = messages.MessageRequest(recipient, message)
     messenger.send(request)
 
+
 def show_movies(messenger, recipient, _data):
-    btns = list()
+    btns = []
 
     for d in _data:
         btn = elements.PostbackButton(
-                title=str(d.name),
-                payload=str(d.name)
+            title=str(d.name),
+            payload=str(d.name)
         )
 
         btns.append(btn)
 
     template_btn = templates.ButtonTemplate(
-       text='Which Movie?',
-       buttons=btns
+        text='Which Movie?',
+        buttons=btns
     )
 
     attachment = attachments.TemplateAttachment(template=template_btn)
@@ -113,10 +115,11 @@ def show_movies(messenger, recipient, _data):
     request = messages.MessageRequest(recipient, message)
     messenger.send(request)
 
+
 def show_movie_detail(fbid, _data):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     msg_dict = dict()
-    msg_dict['recipient'] = {"id":fbid}
+    msg_dict['recipient'] = {"id": fbid}
 
     msg_dict['message'] = dict()
 
@@ -135,7 +138,8 @@ def show_movie_detail(fbid, _data):
 
     print(response_msg)
 
-    status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
+    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
+
 
 class BotView(generic.View):
     def get(self, request, *args, **kwargs):
@@ -166,6 +170,7 @@ class BotView(generic.View):
                     messenger = MessengerClient(access_token=_PAGE_TOKEN)
                     recipient = messages.Recipient(recipient_id=fb_id)
                     kw = message.get('message')['text'].lower() if 'text' in message.get('message') else None
+                    print "here: %s" % str(kw)
                     if kw == 'yo':
                         show_welcome_message(messenger, recipient)
                     elif kw == 'now':
