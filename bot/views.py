@@ -212,19 +212,19 @@ class BotView(generic.View):
                     if kw == 'yo':
                         show_mov_temp(fb_id)
                         # show_welcome_message(messenger, recipient)
-                    elif kw == 'now':
-                        _data = movies_object.filter(status='NP')
-                        show_movies(messenger, recipient, _data)
-                    elif kw == 'up':
-                        _data = movies_object.filter(status='UP')
-                        show_movies(messenger, recipient, _data)
-                    elif kw in list_movies:
-                        try:
-                            mv = movies_object.get(name__iexact=kw)
-                            _data = showtime_object.filter(movie_id=mv.id)
-                            show_movie_detail(fb_id, _data)
-                        except Movie.DoesNotExist:
-                            show_text_message(fb_id, _data)
+                    # elif kw == 'now':
+                    #     _data = movies_object.filter(status='NP')
+                    #     show_movies(messenger, recipient, _data)
+                    # elif kw == 'up':
+                    #     _data = movies_object.filter(status='UP')
+                    #     show_movies(messenger, recipient, _data)
+                    # elif kw in list_movies:
+                    #     try:
+                    #         mv = movies_object.get(name__iexact=kw)
+                    #         _data = showtime_object.filter(movie_id=mv.id)
+                    #         show_movie_detail(fb_id, _data)
+                    #     except Movie.DoesNotExist:
+                    #         show_text_message(fb_id, _data)
                     else:
                         show_text_message(fb_id, _data)
         return HttpResponse()
