@@ -61,7 +61,7 @@ def show_movies(fbid, movies):
 
     elements = []
     for mv in movies:
-        el = {"title": str(mv.name), "image_url": mv.poster, "subtitle": mv.plot}
+        el = {"title": str(mv.name)[0:75], "image_url": mv.poster, "subtitle": str(mv.plot)[0:75]}
         elements.append(el)
 
     elems = [{"title": "Classic White T-Shirt",
