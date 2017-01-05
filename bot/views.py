@@ -46,7 +46,7 @@ def show_text_message(fbid, _data):
     status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
 
 
-def show_mov_temp(fbid):
+def show_mov_temp(fbid, movies):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     response_msg = dict()
 
@@ -62,20 +62,20 @@ def show_mov_temp(fbid):
     elems = [{"title": "Classic White T-Shirt",
               "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
               "subtitle": "10 Cotton, 20 Comfortable",
-              "default_action": defac,
-              "buttons": btns
+              # "default_action": defac,
+              # "buttons": btns
               },
              {"title": "Classic White T-Shirt",
               "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
               "subtitle": "10 Cotton, 20 Comfortable",
-              "default_action": defac,
-              "buttons": btns
+              # "default_action": defac,
+              # "buttons": btns
               },
              {"title": "Classic White T-Shirt",
               "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
               "subtitle": "10 Cotton, 20 Comfortable",
-              "default_action": defac,
-              "buttons": btns
+              # "default_action": defac,
+              # "buttons": btns
               }
              ]
 
@@ -85,7 +85,7 @@ def show_mov_temp(fbid):
         "template_type": "list",
         "top_element_style": "compact",
         "elements": elems,
-        "buttons": last_btn
+        # "buttons": last_btn
     }
 
     attc = {
@@ -228,21 +228,20 @@ class BotView(generic.View):
                     kw = message.get('message')['text'].lower() if 'text' in message.get('message') else None
                     print "here: %s" % str(kw)
                     if kw == 'yo':
-                        show_mov_temp(fb_id)
-                        # show_welcome_message(messenger, recipient)
-                    # elif kw == 'now':
-                    #     _data = movies_object.filter(status='NP')
-                    #     show_movies(messenger, recipient, _data)
-                    # elif kw == 'up':
-                    #     _data = movies_object.filter(status='UP')
-                    #     show_movies(messenger, recipient, _data)
-                    # elif kw in list_movies:
-                    #     try:
-                    #         mv = movies_object.get(name__iexact=kw)
-                    #         _data = showtime_object.filter(movie_id=mv.id)
-                    #         show_movie_detail(fb_id, _data)
-                    #     except Movie.DoesNotExist:
-                    #         show_text_message(fb_id, _data)
+                        show_welcome_message(messenger, recipient)
+                    elif kw == 'now':
+                        _data = movies_object.filter(status='NP')
+                        show_mov_temp(fb_id, _data)
+                    elif kw == 'up':
+                        _data = movies_object.filter(status='UP')
+                        show_movies(messenger, recipient, _data)
+                    elif kw in list_movies:
+                        try:
+                            mv = movies_object.get(name__iexact=kw)
+                            _data = showtime_object.filter(movie_id=mv.id)
+                            show_movie_detail(fb_id, _data)
+                        except Movie.DoesNotExist:
+                            show_text_message(fb_id, _data)
                     else:
                         show_text_message(fb_id, _data)
         return HttpResponse()
