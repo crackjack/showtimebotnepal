@@ -50,18 +50,18 @@ def show_mov_temp(fbid):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     response_msg = dict()
 
-    response_msg['recipient'] = {'id': fbid}
+    response_msg['recipient'] = {"id": fbid}
 
-    btns = [{'title': 'Book Now', 'type': 'web_url', 'url': 'http://niteshrijal.com.np', 'messenger_extensions': True,
-             'webview_height_ratio': 'tall', 'fallback_url': 'http://niteshrijal.com.np'}]
+    btns = [{"title": "Book Now", "type": "web_url", "url": "http://niteshrijal.com.np", "messenger_extensions": True,
+             "webview_height_ratio": "tall", "fallback_url": "http://niteshrijal.com.np"}]
 
-    defac = {"type": "web_url", "url": "http://niteshrijal.com.np", "messenger_extensions": True,
+    defac = {"type": "web_url", "url": "http://niteshrijal.com.np", "messenger_extensions": "true",
              "webview_height_ratio": "tall", "fallback_url": "http://niteshrijal.com.np"
              }
 
     elems = [{"title": "Classic White T-Shirt",
               "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
-              "subtitle": "100% Cotton, 200% Comfortable",
+              "subtitle": "10 Cotton, 20 Comfortable",
               "default_action": defac,
               "buttons": btns
               }]
@@ -80,11 +80,11 @@ def show_mov_temp(fbid):
         "payload": paylo,
     }
 
-    response_msg["message"] = {'attachment': attc}
+    response_msg["message"] = {"attachment": attc}
 
     print(response_msg)
 
-    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
+    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=json.dumps(response_msg))
 
 
 def show_movie_list(fbid, _data):
