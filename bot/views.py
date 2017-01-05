@@ -67,7 +67,7 @@ def show_movie_list(fbid, _data):
 
     status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
 
-def show_welcome_message(recipient):
+def show_welcome_message(messenger, recipient):
     btn_now_playing = elements.PostbackButton(
        title='Now Playing',
        payload='now'
@@ -91,7 +91,7 @@ def show_welcome_message(recipient):
     request = messages.MessageRequest(recipient, message)
     messenger.send(request)
 
-def show_movies(recipient, _data):
+def show_movies(messenger, recipient, _data):
     buttons = []
 
     for d in _data:
@@ -165,16 +165,15 @@ class BotView(generic.View):
                     fb_id = message['sender']['id']
                     messenger = MessengerClient(access_token=_PAGE_TOKEN)
                     recipient = messages.Recipient(recipient_id=fb_id)
-                    # Print the message to the terminal
                     kw = message.get('message')['text'].lower() if 'text' in message.get('message') else None
                     if kw == 'yo':
-                        show_welcome_message(recipient)
+                        show_welcome_message(messenger, recipient)
                     elif kw == 'now':
                         _data = movies_object.filter(status='NP')
-                        show_movies(recipient, _data)
+                        show_movies(messenger, recipient, _data)
                     elif kw == 'up':
                         _data = movies_object.filter(status='UP')
-                        show_movies(recipient, _data)
+                        show_movies(messenger, recipient, _data)
                     elif kw in list_movies:
                         try:
                             mv = movies_object.get(name__iexact=kw)
