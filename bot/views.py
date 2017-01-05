@@ -55,7 +55,7 @@ def show_mov_temp(fbid):
     btns = [{"title": "Book Now", "type": "web_url", "url": "http://niteshrijal.com.np", "messenger_extensions": True,
              "webview_height_ratio": "tall", "fallback_url": "http://niteshrijal.com.np"}]
 
-    defac = {"type": "web_url", "url": "http://niteshrijal.com.np", "messenger_extensions": "true",
+    defac = {"type": "web_url", "url": "http://niteshrijal.com.np", "messenger_extensions": True,
              "webview_height_ratio": "tall", "fallback_url": "http://niteshrijal.com.np"
              }
 
