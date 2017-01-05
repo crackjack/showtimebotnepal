@@ -250,10 +250,10 @@ class BotView(generic.View):
             show_welcome_message(messenger, recipient)
         elif kw == 'now':
             _data = movies_object.filter(status='NP')
-            show_mov_temp(fb_id, _data)
+            show_movies(fb_id, _data)
         elif kw == 'up':
             _data = movies_object.filter(status='UP')
-            show_movies(messenger, recipient, _data)
+            show_movies(fb_id, _data)
         elif kw in list_movies:
             try:
                 mv = movies_object.get(name__iexact=kw)
