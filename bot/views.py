@@ -66,7 +66,7 @@ def show_mov_temp(fbid):
               "buttons": btns
               }]
 
-    last_btn = {"buttons": [{"title": "View More", "type": "postback", "payload": "now"}]}
+    last_btn = [{"title": "View More", "type": "postback", "payload": "now"}]
 
     paylo = {
         "template_type": "list",
