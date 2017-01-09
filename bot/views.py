@@ -93,15 +93,13 @@ def show_movie_detail(fbid, _data):
         qr_item = dict()
         qr_item['content_type'] = "text"
         qr_item['title'] = "%s @ %s" % (str(d.time), str(d.cinema))
-        qr_item['payload'] = "%s @ %s" % (str(d.time), str(d.cinema))
+        qr_item['payload'] = "%s" % str(d.id)
 
         qr.append(qr_item)
 
     msg_dict['message']['text'] = "When and Where?"
     msg_dict['message']['quick_replies'] = qr
     response_msg = json.dumps(msg_dict)
-
-    print(response_msg)
 
     requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
 
@@ -147,9 +145,7 @@ class BotView(generic.View):
         movies_object = Movie.objects
         showtime_object = Showtime.objects
         list_movies_id = [str(mv.event_id) for mv in movies_object.all()]
-
-        # messenger = MessengerClient(access_token=_PAGE_TOKEN)
-        # recipient = messages.Recipient(recipient_id=fb_id)
+        list_showtime_id = [str(sh.id) for sh in showtime_object.all()]
 
         if kw == 'yo':
             show_welcome_message(fb_id)
@@ -161,9 +157,16 @@ class BotView(generic.View):
             show_movies(fb_id, _data)
         elif kw in list_movies_id:
             try:
-                mv = movies_object.get(event_id=kw)
-                _data = showtime_object.filter(movie_id=mv.id)
+                mv = movies_object.get(event_id=int(kw))
+                _data = showtime_object.filter(movie_id=mv.id)[:10]  # quick replies can have 10 entries only
                 show_movie_detail(fb_id, _data)
+            except Movie.DoesNotExist:
+                show_text_message(fb_id, _data)
+        elif kw in list_showtime_id:
+            try:
+                booking_url = showtime_object.get(id=int(kw)).booking_url
+                _data = "You can book your ticket here: %s" % str(booking_url)
+                show_text_message(fb_id, _data)
             except Movie.DoesNotExist:
                 show_text_message(fb_id, _data)
         else:
