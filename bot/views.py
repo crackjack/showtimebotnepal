@@ -4,7 +4,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http.response import HttpResponse
 import json
 import requests
-# from messengerbot import MessengerClient, messages, attachments, templates, elements
 from movies.models import Movie
 from showtimes.models import Showtime
 
@@ -12,87 +11,9 @@ _PAGE_TOKEN = 'EAAXmqZAwr6xoBAKtpxW7m3tM6XrBDFFfWiQZABNZA3JzXcs7hsTspxryngttkkze
 post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
 
 
-def post_facebook_message(fbid, _data, _type):
-    post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
-    msg_dict = dict()
-    msg_dict['recipient'] = {"id": fbid}
-    if _type == 'quick':
-        msg_dict['message'] = dict()
-        qr = []
-        for d in _data:
-            qr_item = dict()
-            qr_item['content_type'] = "text"
-            qr_item['title'] = "%s" % str(d.name)
-            qr_item['payload'] = "%s" % str(d.name)
-
-            qr.append(qr_item)
-
-        msg_dict['message']['text'] = "Pick a movie:"
-        msg_dict['message']['quick_replies'] = qr
-        response_msg = json.dumps(msg_dict)
-    else:
-        response_msg = json.dumps({"recipient": {"id": fbid}, "message": {"text": _data}})
-
-    print(response_msg)
-
-    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
-
-
 def show_text_message(fbid, _data):
     response_msg = json.dumps({"recipient": {"id": fbid}, "message": {"text": _data}})
     requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
-
-
-def show_movies(fbid, movies):
-    response_msg = dict()
-    response_msg["recipient"] = {"id": fbid}
-    elems = []
-
-    for mv in movies:
-        showtime_btn = [{"type": "postback", "title": "Showtime", "payload": str(mv.event_id)}]
-        el = {"title": str(mv.name)[0:75], "image_url": mv.poster, "subtitle": str(mv.plot)[0:75],
-              "buttons": showtime_btn}
-        elems.append(el)
-
-    last_btn = [{"title": "View on Site", "type": "web_url", "url": "http://www.qfxcinemas.com/"}]
-
-    payload = {
-        "template_type": "list",
-        "top_element_style": "compact",
-        "elements": elems,
-        "buttons": last_btn
-    }
-
-    attachment = {
-        "type": "template",
-        "payload": payload,
-    }
-
-    response_msg["message"] = {"attachment": attachment}
-    requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=json.dumps(response_msg))
-
-# def show_movie_list(fbid, _data):
-#     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
-#     msg_dict = dict()
-#     msg_dict['recipient'] = {"id": fbid}
-#
-#     msg_dict['message'] = dict()
-#     qr = []
-#     for d in _data:
-#         qr_item = dict()
-#         qr_item['content_type'] = "text"
-#         qr_item['title'] = "%s" % str(d.name)
-#         qr_item['payload'] = "%s" % str(d.name)
-#
-#         qr.append(qr_item)
-#
-#     msg_dict['message']['text'] = "What Movie?"
-#     msg_dict['message']['quick_replies'] = qr
-#     response_msg = json.dumps(msg_dict)
-#
-#     print(response_msg)
-#
-#     status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
 
 
 def show_welcome_message(fbid):
@@ -124,49 +45,34 @@ def show_welcome_message(fbid):
     response_msg["message"] = {"attachment": attachment}
     requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=json.dumps(response_msg))
 
-    # btn_now_playing = elements.PostbackButton(
-    #     title='Now Playing',
-    #     payload='now'
-    # )
-    #
-    # btn_up_coming = elements.PostbackButton(
-    #     title='Upcoming',
-    #     payload='up'
-    # )
-    #
-    # template_btn = templates.ButtonTemplate(
-    #     text='What movies are you looking for?',
-    #     buttons=[btn_now_playing, btn_up_coming]
-    # )
-    #
-    # attachment = attachments.TemplateAttachment(template=template_btn)
-    #
-    # message = messages.Message(attachment=attachment)
-    # request = messages.MessageRequest(recipient, message)
-    # messenger.send(request)
 
+def show_movies(fbid, movies):
+    response_msg = dict()
+    response_msg["recipient"] = {"id": fbid}
+    elems = []
 
-# def show_movies(messenger, recipient, _data):
-#     btns = []
-#
-#     for d in _data:
-#         btn = elements.PostbackButton(
-#             title=str(d.name),
-#             payload=str(d.name)
-#         )
-#
-#         btns.append(btn)
-#
-#     template_btn = templates.ButtonTemplate(
-#         text='Which Movie?',
-#         buttons=btns
-#     )
-#
-#     attachment = attachments.TemplateAttachment(template=template_btn)
-#
-#     message = messages.Message(attachment=attachment)
-#     request = messages.MessageRequest(recipient, message)
-#     messenger.send(request)
+    for mv in movies:
+        showtime_btn = [{"type": "postback", "title": "Showtime", "payload": str(mv.event_id)}]
+        el = {"title": str(mv.name)[0:75], "image_url": mv.poster, "subtitle": str(mv.plot)[0:75],
+              "buttons": showtime_btn}
+        elems.append(el)
+
+    last_btn = [{"title": "View on Site", "type": "web_url", "url": "http://www.qfxcinemas.com/"}]
+
+    payload = {
+        "template_type": "list",
+        "top_element_style": "compact",
+        "elements": elems,
+        "buttons": last_btn
+    }
+
+    attachment = {
+        "type": "template",
+        "payload": payload,
+    }
+
+    response_msg["message"] = {"attachment": attachment}
+    requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=json.dumps(response_msg))
 
 
 def show_movie_detail(fbid, _data):
@@ -190,11 +96,11 @@ def show_movie_detail(fbid, _data):
 
     print(response_msg)
 
-    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
+    requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
 
 
 class BotView(generic.View):
-    def get(self, request, *args, **kwargs):
+    def get(self):
         if self.request.GET['hub.verify_token'] == '22552255':
             return HttpResponse(self.request.GET['hub.challenge'])
         else:
@@ -205,7 +111,7 @@ class BotView(generic.View):
         return generic.View.dispatch(self, request, *args, **kwargs)
 
     # Post function to handle Facebook messages
-    def post(self, request, *args, **kwargs):
+    def post(self):
         # Converts the text payload into a python dictionary
         incoming_message = json.loads(self.request.body.decode('utf-8'))
         # Facebook recommends going through every entry since they might send
@@ -248,7 +154,7 @@ class BotView(generic.View):
             show_movies(fb_id, _data)
         elif kw in list_movies_id:
             try:
-                mv = movies_object.get(name__iexact=kw)
+                mv = movies_object.get(event_id=kw)
                 _data = showtime_object.filter(movie_id=mv.id)
                 show_movie_detail(fb_id, _data)
             except Movie.DoesNotExist:
