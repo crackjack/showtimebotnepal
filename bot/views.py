@@ -61,9 +61,7 @@ def show_movies(fbid, movies):
 
     elems = []
     for mv in movies:
-        showtime_btn = [
-            {"type": "postback", "title": "Showtime", "payload": str(mv.event_id), "messenger_extensions": True,
-             "webview_height_ratio": "tall"}]
+        showtime_btn = [{"type": "postback", "title": "Showtime", "payload": str(mv.event_id)}]
         el = {"title": str(mv.name)[0:75], "image_url": mv.poster, "subtitle": str(mv.plot)[0:75],
               "buttons": showtime_btn}
         elems.append(el)
@@ -89,12 +87,12 @@ def show_movies(fbid, movies):
     #          ]
 
     last_btn = [
-        {"title": "View on Site", "type": "web_url", "url": "https://qfxcinemas.com", "messenger_extensions": True,
-         "webview_height_ratio": "tall", "fallback_url": "https://qfxcinemas.com"}]
+        {"title": "View on Site", "type": "web_url", "url": "https://www.qfxcinemas.com", "messenger_extensions": True,
+         "webview_height_ratio": "tall", "fallback_url": "https://www.qfxcinemas.com"}]
 
     payload = {
         "template_type": "list",
-        # "top_element_style": "compact",
+        "top_element_style": "compact",
         "elements": elems,
         "buttons": last_btn
     }
@@ -112,7 +110,7 @@ def show_movies(fbid, movies):
 
     status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=data)
 
-    print status
+    print status.text
 
 
 # def show_movie_list(fbid, _data):
