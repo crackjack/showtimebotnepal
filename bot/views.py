@@ -9,6 +9,7 @@ from movies.models import Movie
 from showtimes.models import Showtime
 
 _PAGE_TOKEN = 'EAAXmqZAwr6xoBAKtpxW7m3tM6XrBDFFfWiQZABNZA3JzXcs7hsTspxryngttkkzeUYZCjJ2wG8DEaekZAZAIXc1kAwiLtfj2jhFYbOcuGaJRDaWyj0OqCdrxZApZCBmlUZC2p9DIAHBKJ5ghGEuUQdTFox6WvXt8cZA7cm7VDt3ZBcNJwZDZD'
+post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
 
 
 def post_facebook_message(fbid, _data, _type):
@@ -38,57 +39,22 @@ def post_facebook_message(fbid, _data, _type):
 
 
 def show_text_message(fbid, _data):
-    post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     response_msg = json.dumps({"recipient": {"id": fbid}, "message": {"text": _data}})
-
-    print(response_msg)
-
-    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
+    requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
 
 
 def show_movies(fbid, movies):
-    post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     response_msg = dict()
-
     response_msg["recipient"] = {"id": fbid}
-
-    btns = [{"title": "Book Now", "type": "web_url", "url": "https://niteshrijal.com.np", "messenger_extensions": True,
-             "webview_height_ratio": "tall", "fallback_url": "https://niteshrijal.com.np"}]
-
-    defac = {"type": "web_url", "url": "https://niteshrijal.com.np", "messenger_extensions": True,
-             "webview_height_ratio": "tall", "fallback_url": "https://niteshrijal.com.np"
-             }
-
     elems = []
+
     for mv in movies:
         showtime_btn = [{"type": "postback", "title": "Showtime", "payload": str(mv.event_id)}]
         el = {"title": str(mv.name)[0:75], "image_url": mv.poster, "subtitle": str(mv.plot)[0:75],
               "buttons": showtime_btn}
         elems.append(el)
 
-    # elems = [{"title": "Classic White T-Shirt",
-    #           "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
-    #           "subtitle": "10 Cotton, 20 Comfortable",
-    #           # "default_action": defac,
-    #           # "buttons": btns
-    #           },
-    #          {"title": "Classic White T-Shirt",
-    #           "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
-    #           "subtitle": "10 Cotton, 20 Comfortable",
-    #           # "default_action": defac,
-    #           # "buttons": btns
-    #           },
-    #          {"title": "Classic White T-Shirt",
-    #           "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
-    #           "subtitle": "10 Cotton, 20 Comfortable",
-    #           # "default_action": defac,
-    #           # "buttons": btns
-    #           }
-    #          ]
-
-    last_btn = [
-        {"title": "View on Site", "type": "web_url", "url": "https://www.qfxcinemas.com", "messenger_extensions": True,
-         "webview_height_ratio": "tall", "fallback_url": "https://www.qfxcinemas.com"}]
+    last_btn = [{"title": "View on Site", "type": "web_url", "url": "http://www.qfxcinemas.com/"}]
 
     payload = {
         "template_type": "list",
@@ -103,15 +69,7 @@ def show_movies(fbid, movies):
     }
 
     response_msg["message"] = {"attachment": attachment}
-
-    data = json.dumps(response_msg)
-
-    print(data)
-
-    status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=data)
-
-    print status.text
-
+    requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=json.dumps(response_msg))
 
 # def show_movie_list(fbid, _data):
 #     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
@@ -137,27 +95,55 @@ def show_movies(fbid, movies):
 #     status = requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
 
 
-def show_welcome_message(messenger, recipient):
-    btn_now_playing = elements.PostbackButton(
-        title='Now Playing',
-        payload='now'
-    )
+def show_welcome_message(fbid):
+    response_msg = dict()
+    response_msg["recipient"] = {"id": fbid}
 
-    btn_up_coming = elements.PostbackButton(
-        title='Upcoming',
-        payload='up'
-    )
+    payload = {
+        "template_type": "button",
+        "text": "What movies are you looking for?",
+        "buttons": [
+            {
+                "type": "postback",
+                "title": "Now Playing",
+                "payload": "now"
+            },
+            {
+                "type": "postback",
+                "title": "Upcoming",
+                "payload": "up"
+            }
+        ]
+    }
 
-    template_btn = templates.ButtonTemplate(
-        text='What movies are you looking for?',
-        buttons=[btn_now_playing, btn_up_coming]
-    )
+    attachment = {
+        "type": "template",
+        "payload": payload,
+    }
 
-    attachment = attachments.TemplateAttachment(template=template_btn)
+    response_msg["message"] = {"attachment": attachment}
+    requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=json.dumps(response_msg))
 
-    message = messages.Message(attachment=attachment)
-    request = messages.MessageRequest(recipient, message)
-    messenger.send(request)
+    # btn_now_playing = elements.PostbackButton(
+    #     title='Now Playing',
+    #     payload='now'
+    # )
+    #
+    # btn_up_coming = elements.PostbackButton(
+    #     title='Upcoming',
+    #     payload='up'
+    # )
+    #
+    # template_btn = templates.ButtonTemplate(
+    #     text='What movies are you looking for?',
+    #     buttons=[btn_now_playing, btn_up_coming]
+    # )
+    #
+    # attachment = attachments.TemplateAttachment(template=template_btn)
+    #
+    # message = messages.Message(attachment=attachment)
+    # request = messages.MessageRequest(recipient, message)
+    # messenger.send(request)
 
 
 # def show_movies(messenger, recipient, _data):
