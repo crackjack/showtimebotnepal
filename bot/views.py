@@ -100,7 +100,7 @@ def show_movie_detail(fbid, _data):
 
 
 class BotView(generic.View):
-    def get(self):
+    def get(self, request, *args, **kwargs):
         if self.request.GET['hub.verify_token'] == '22552255':
             return HttpResponse(self.request.GET['hub.challenge'])
         else:
@@ -111,7 +111,7 @@ class BotView(generic.View):
         return generic.View.dispatch(self, request, *args, **kwargs)
 
     # Post function to handle Facebook messages
-    def post(self):
+    def post(self, request, *args, **kwargs):
         # Converts the text payload into a python dictionary
         incoming_message = json.loads(self.request.body.decode('utf-8'))
         # Facebook recommends going through every entry since they might send
