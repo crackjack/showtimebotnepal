@@ -115,7 +115,7 @@ def show_booking_message(fbid, _data):
             {
                 "type": "web_url",
                 "title": "Book Now",
-                "url": _data
+                "url": _data.booking_url
             }
         ]
     }
