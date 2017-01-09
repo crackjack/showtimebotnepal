@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http.response import HttpResponse
 import json
 import requests
-from messengerbot import MessengerClient, messages, attachments, templates, elements
+# from messengerbot import MessengerClient, messages, attachments, templates, elements
 from movies.models import Movie
 from showtimes.models import Showtime
 
@@ -170,7 +170,6 @@ def show_welcome_message(fbid):
 
 
 def show_movie_detail(fbid, _data):
-    post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % _PAGE_TOKEN
     msg_dict = dict()
     msg_dict['recipient'] = {"id": fbid}
 
@@ -236,11 +235,11 @@ class BotView(generic.View):
         showtime_object = Showtime.objects
         list_movies_id = [str(mv.event_id) for mv in movies_object.all()]
 
-        messenger = MessengerClient(access_token=_PAGE_TOKEN)
-        recipient = messages.Recipient(recipient_id=fb_id)
+        # messenger = MessengerClient(access_token=_PAGE_TOKEN)
+        # recipient = messages.Recipient(recipient_id=fb_id)
 
         if kw == 'yo':
-            show_welcome_message(messenger, recipient)
+            show_welcome_message(fb_id)
         elif kw == 'now':
             _data = movies_object.filter(status='NP')[:4]  # only 4 entries are possible in a list template
             show_movies(fb_id, _data)
