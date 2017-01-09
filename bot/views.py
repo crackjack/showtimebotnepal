@@ -59,38 +59,39 @@ def show_movies(fbid, movies):
              "webview_height_ratio": "tall", "fallback_url": "https://niteshrijal.com.np"
              }
 
-    elements = []
+    elems = []
     for mv in movies:
-        el = {"title": str(mv.name)[0:75], "image_url": mv.poster, "subtitle": str(mv.plot)[0:75]}
-        elements.append(el)
+        showtime_btn = elements.PostbackButton(title='Showtimes', payload=mv.event_id)
+        el = {"title": str(mv.name)[0:75], "image_url": mv.poster, "subtitle": str(mv.plot)[0:75], "buttons": showtime_btn}
+        elems.append(el)
 
-    elems = [{"title": "Classic White T-Shirt",
-              "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
-              "subtitle": "10 Cotton, 20 Comfortable",
-              # "default_action": defac,
-              # "buttons": btns
-              },
-             {"title": "Classic White T-Shirt",
-              "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
-              "subtitle": "10 Cotton, 20 Comfortable",
-              # "default_action": defac,
-              # "buttons": btns
-              },
-             {"title": "Classic White T-Shirt",
-              "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
-              "subtitle": "10 Cotton, 20 Comfortable",
-              # "default_action": defac,
-              # "buttons": btns
-              }
-             ]
+    # elems = [{"title": "Classic White T-Shirt",
+    #           "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
+    #           "subtitle": "10 Cotton, 20 Comfortable",
+    #           # "default_action": defac,
+    #           # "buttons": btns
+    #           },
+    #          {"title": "Classic White T-Shirt",
+    #           "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
+    #           "subtitle": "10 Cotton, 20 Comfortable",
+    #           # "default_action": defac,
+    #           # "buttons": btns
+    #           },
+    #          {"title": "Classic White T-Shirt",
+    #           "image_url": "https://peterssendreceiveapp.ngrok.io/img/white-t-shirt.png",
+    #           "subtitle": "10 Cotton, 20 Comfortable",
+    #           # "default_action": defac,
+    #           # "buttons": btns
+    #           }
+    #          ]
 
-    last_btn = [{"title": "View More", "type": "postback", "payload": "now"}]
+    last_btn = [{"title": "View on Site", "type": "web_url", "url": "https://qfxcinemas.com"}]
 
     payload = {
         "template_type": "list",
-        "top_element_style": "compact",
-        "elements": elements,
-        # "buttons": last_btn
+        # "top_element_style": "compact",
+        "elements": elems,
+        "buttons": last_btn
     }
 
     attachment = {
@@ -233,7 +234,8 @@ class BotView(generic.View):
                     kw = message.get('postback')['payload'].lower() if 'payload' in message.get('postback') else None
 
                 if kw:
-                    self.take_action(kw, fb_id)
+                    print "this came back: %s" % str(kw)
+                    self.take_action(str(kw), fb_id)
 
         return HttpResponse()
 
@@ -241,7 +243,7 @@ class BotView(generic.View):
         _data = 'Sorry, I cannot handle that request.'
         movies_object = Movie.objects
         showtime_object = Showtime.objects
-        list_movies = [str(mv.name).lower() for mv in movies_object.all()]
+        list_movies_id = [str(mv.event_id) for mv in movies_object.all()]
 
         messenger = MessengerClient(access_token=_PAGE_TOKEN)
         recipient = messages.Recipient(recipient_id=fb_id)
@@ -249,12 +251,12 @@ class BotView(generic.View):
         if kw == 'yo':
             show_welcome_message(messenger, recipient)
         elif kw == 'now':
-            _data = movies_object.filter(status='NP')
+            _data = movies_object.filter(status='NP')[:4]  # only 4 entries are possible in a list template
             show_movies(fb_id, _data)
         elif kw == 'up':
-            _data = movies_object.filter(status='UP')
+            _data = movies_object.filter(status='UP')[:4]  # only 4 entries are possible in a list template
             show_movies(fb_id, _data)
-        elif kw in list_movies:
+        elif kw in list_movies_id:
             try:
                 mv = movies_object.get(name__iexact=kw)
                 _data = showtime_object.filter(movie_id=mv.id)
