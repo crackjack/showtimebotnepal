@@ -1,15 +1,8 @@
 from __future__ import unicode_literals
-import datetime
 from django.db import models
 
-class MovieUpdatedManager(models.Manager):
-    def get_queryset(self):
-        return super(MovieUpdatedManager, self).get_queryset().filter(last_updated_date__gte=datetime.datetime.utcnow())
 
 class Movie(models.Model):
-
-    recent = MovieUpdatedManager()
-    objects = models.Manager()
 
     class Meta:
         app_label = 'movies'

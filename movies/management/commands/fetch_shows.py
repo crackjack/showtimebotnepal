@@ -1,8 +1,9 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from bs4 import BeautifulSoup
 from urlparse import urljoin
 import requests
 from movies.models import Movie
+
 
 class Command(BaseCommand):
     help = 'scrap the movies from qfx site, store in db locally'

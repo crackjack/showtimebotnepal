@@ -158,7 +158,7 @@ class BotView(generic.View):
         elif kw in list_movies_id:
             try:
                 mv = movies_object.get(event_id=int(kw))
-                _data = showtime_object.filter(movie_id=mv.id)[:10]  # quick replies can have 10 entries only
+                _data = showtime_object.filter(movie_id=mv.id)[:11]  # quick replies can have 11 entries only
                 show_movie_detail(fb_id, _data)
             except Movie.DoesNotExist:
                 show_text_message(fb_id, _data)
