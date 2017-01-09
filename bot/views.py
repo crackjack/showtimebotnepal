@@ -93,7 +93,7 @@ def show_movie_detail(fbid, _data):
         qr_item = dict()
         qr_item['content_type'] = "text"
         qr_item['title'] = "%s @ %s" % (str(d.time), str(d.cinema))
-        qr_item['payload'] = "%s @ %s" % (str(d.time), str(d.cinema))
+        qr_item['payload'] = "%s" % str(d.id)
 
         qr.append(qr_item)
 
@@ -131,7 +131,11 @@ class BotView(generic.View):
                 print message
 
                 if 'message' in message:
-                    kw = message.get('message')['text'].lower() if 'text' in message.get('message') else None
+                    if 'quick_reply' in message.get('message'):
+                        if 'payload' in message.get('message')['quick_reply']:
+                            kw = message.get('message')['quick_reply'].get('payload').lower()
+                    else:
+                        kw = message.get('message')['text'].lower() if 'text' in message.get('message') else None
 
                 if 'postback' in message:
                     kw = message.get('postback')['payload'].lower() if 'payload' in message.get('postback') else None
@@ -164,7 +168,7 @@ class BotView(generic.View):
                 show_movie_detail(fb_id, _data)
             except Movie.DoesNotExist:
                 show_text_message(fb_id, _data)
-        elif '@' in kw:
+        elif kw in list_showtime_id:
             try:
                 booking_url = showtime_object.get(id=int(kw)).booking_url
                 _data = "You can book your ticket here: %s" % str(booking_url)
