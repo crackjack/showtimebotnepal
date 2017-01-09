@@ -52,9 +52,17 @@ def show_movies(fbid, movies):
     elems = []
 
     for mv in movies:
-        showtime_btn = [{"type": "postback", "title": "Showtime", "payload": str(mv.event_id)}]
+        if mv.status == 'NP':
+            action_btn = [
+                {"type": "postback", "title": "Showtime", "payload": str(mv.event_id)},
+                {"type": "web_url", "title": "Trailer", "url": str(mv.trailer)}
+            ]
+        else:
+            action_btn = [
+                {"type": "web_url", "title": "Trailer", "url": str(mv.trailer)}
+            ]
         el = {"title": str(mv.name)[0:75], "image_url": mv.poster, "subtitle": str(mv.plot)[0:75],
-              "buttons": showtime_btn}
+              "buttons": action_btn}
         elems.append(el)
 
     last_btn = [{"title": "View on Site", "type": "web_url", "url": "http://www.qfxcinemas.com/"}]
