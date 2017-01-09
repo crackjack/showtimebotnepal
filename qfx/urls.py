@@ -13,29 +13,29 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
 from django.contrib import admin
-
 from django.conf.urls import url, include
-from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
-
 from movies.models import Movie
 from showtimes.models import Showtime
+
 
 class MovieSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Movie
         fields = ('name', 'poster', 'trailer', 'plot', 'status')
 
+
 class MovieViewSet(viewsets.ModelViewSet):
-    queryset = Movie.recent.all()
+    queryset = Movie.objects.all()
     serializer_class = MovieSerializer
+
 
 class ShowtimeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Showtime
         fields = ('date', 'movie', 'cinema', 'time', 'booking_url')
+
 
 class ShowtimeViewSet(viewsets.ModelViewSet):
     queryset = Showtime.objects.all()
