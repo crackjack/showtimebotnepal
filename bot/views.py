@@ -92,15 +92,15 @@ def show_movie_detail(fbid, _data):
     for d in _data:
         qr_item = dict()
         qr_item['content_type'] = "text"
-        qr_item['title'] = "%s @ %s" % (str(d.time), str(d.cinema))
-        qr_item['payload'] = "%s" % str(d.id)
+        qr_item['title'] = "%s" % str(d.id)
+        qr_item['payload'] = "%s @ %s" % (str(d.time), str(d.cinema))
 
         qr.append(qr_item)
 
     msg_dict['message']['text'] = "When and Where?"
     msg_dict['message']['quick_replies'] = qr
     response_msg = json.dumps(msg_dict)
-
+    print response_msg
     requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
 
 
@@ -129,9 +129,11 @@ class BotView(generic.View):
                 fb_id = message['sender']['id']
 
                 if 'message' in message:
+                    print "inside message text"
                     kw = message.get('message')['text'].lower() if 'text' in message.get('message') else None
 
                 if 'postback' in message:
+                    print "inside message postback"
                     kw = message.get('postback')['payload'].lower() if 'payload' in message.get('postback') else None
 
                 if kw:
