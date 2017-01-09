@@ -104,6 +104,31 @@ def show_movie_detail(fbid, _data):
     requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=response_msg)
 
 
+def show_booking_message(fbid, _data):
+    response_msg = dict()
+    response_msg["recipient"] = {"id": fbid}
+
+    payload = {
+        "template_type": "button",
+        "text": "Ready to book ticket for %s at %s for %s." % (str(_data.movie), str(_data.cinema), str(_data.time)),
+        "buttons": [
+            {
+                "type": "web_url",
+                "title": "Book Now",
+                "url": _data
+            }
+        ]
+    }
+
+    attachment = {
+        "type": "template",
+        "payload": payload,
+    }
+
+    response_msg["message"] = {"attachment": attachment}
+    requests.post(post_message_url, headers={"Content-Type": "application/json"}, data=json.dumps(response_msg))
+
+
 class BotView(generic.View):
     def get(self, request, *args, **kwargs):
         if self.request.GET['hub.verify_token'] == '22552255':
@@ -170,9 +195,8 @@ class BotView(generic.View):
                 show_text_message(fb_id, _data)
         elif kw in list_showtime_id:
             try:
-                booking_url = showtime_object.get(id=int(kw)).booking_url
-                _data = "You can book your ticket here: %s" % str(booking_url)
-                show_text_message(fb_id, _data)
+                _data = showtime_object.get(id=int(kw))
+                show_booking_message(fb_id, _data)
             except Movie.DoesNotExist:
                 show_text_message(fb_id, _data)
         else:
