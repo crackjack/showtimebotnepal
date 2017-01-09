@@ -54,8 +54,7 @@ def show_movies(fbid, movies):
     for mv in movies:
         if mv.status == 'NP':
             action_btn = [
-                {"type": "postback", "title": "Showtime", "payload": str(mv.event_id)},
-                {"type": "web_url", "title": "Trailer", "url": str(mv.trailer)}
+                {"type": "postback", "title": "Showtime", "payload": str(mv.event_id)}
             ]
         else:
             action_btn = [
