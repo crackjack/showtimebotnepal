@@ -61,7 +61,7 @@ def show_movies(fbid, movies):
 
     elems = []
     for mv in movies:
-        showtime_btn = elements.PostbackButton(title='Showtimes', payload=mv.event_id)
+        showtime_btn = {"type": "postback", "title": "Showtime", "payload": str(mv.id)}
         el = {"title": str(mv.name)[0:75], "image_url": mv.poster, "subtitle": str(mv.plot)[0:75], "buttons": showtime_btn}
         elems.append(el)
 
